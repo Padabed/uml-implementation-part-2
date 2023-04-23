@@ -1,4 +1,4 @@
-package basicAssociation;
+package composition;
 
 public enum DeliveryStatus {
     InPreparation,
