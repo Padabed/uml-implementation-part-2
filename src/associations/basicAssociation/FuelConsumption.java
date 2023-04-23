@@ -1,4 +1,4 @@
-package basicAssociation;
+package associations.basicAssociation;
 
 import java.io.Serializable;
 

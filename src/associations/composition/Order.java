@@ -1,58 +1,42 @@
-package associations.basicAssociation;
+package associations.composition;
 
 import associations.DeliveryStatus;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 
-public class Delivery {
+public class Order {
 
-    private Set<Vehicle> vehicles = new HashSet<>();
+    private Delivery delivery;
 
     private String destination; // mandatory
     private LocalDateTime departureTime; // optional
     private LocalDateTime arrivalTime; //optional
     private DeliveryStatus status; // mandatory
 
-    public Delivery(String destination, LocalDateTime departureTime,
-                    LocalDateTime arrivalTime, DeliveryStatus status) {
+    public Order(String destination, LocalDateTime departureTime,
+                 LocalDateTime arrivalTime, DeliveryStatus status, Delivery delivery) {
         setDestination(destination);
         setArrivalTime(arrivalTime);
         setDepartureTime(departureTime);
         setStatus(status);
+        setDelivery(delivery);
     }
 
-    public Delivery(String destination, DeliveryStatus status) {
-        this(destination, null,null, status);
+    public Order(String destination, DeliveryStatus status, Delivery delivery) {
+        this(destination, null,null, status, delivery);
     }
 
-    public Set<Vehicle> getVehicles() {
-        return Collections.unmodifiableSet(vehicles);
+    public void removeOrder() {
+        this.getDelivery().removeOrder(this);
+        setDelivery(null);
     }
 
-    public void addVehicle(Vehicle vehicle) {
-        if (vehicle == null) {
-            throw new IllegalArgumentException("Vehicle cannot be a null value");
-        }
-        if (vehicles.contains(vehicle)) {
-            return;
-        }
-        vehicles.add(vehicle);
-        vehicle.addDelivery(this);
+    public Delivery getDelivery() {
+        return delivery;
     }
 
-    public void removeVehicle(Vehicle vehicle) {
-        if (vehicle == null) {
-            throw new IllegalArgumentException("Vehicle cannot be a null value");
-        }
-        if (!vehicles.contains(vehicle)) {
-            throw new IllegalArgumentException("Vehicle does not exist");
-        }
-        this.vehicles.remove(vehicle);
-        vehicle.removeDelivery(this);
+    private void setDelivery(Delivery delivery) {
+        this.delivery = delivery;
     }
 
     public String getDestination() {
@@ -83,7 +67,7 @@ public class Delivery {
     }
 
     public void setArrivalTime(LocalDateTime arrivalTime) {
-        if (arrivalTime != null && arrivalTime.isAfter(LocalDateTime.now())) {
+        if (arrivalTime.isAfter(LocalDateTime.now())) {
             throw new IllegalArgumentException("Arrival time cannot be predicted");
         }
         if (departureTime != null && arrivalTime.isBefore(departureTime)) {
@@ -102,4 +86,5 @@ public class Delivery {
         }
         this.status = status;
     }
+
 }

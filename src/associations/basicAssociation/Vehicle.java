@@ -1,6 +1,7 @@
-package basicAssociation;
+package associations.basicAssociation;
 
 import java.io.*;
+import java.nio.file.NoSuchFileException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -13,9 +14,6 @@ public class Vehicle implements Serializable {
     private static String OWNER; // static
     private String manufacturer; // mandatory
     private Double pricePerDay; // optional
-
-    private static int VEHICLES_IN_GARAGE; // static
-
     private FuelConsumption fuelConsumption; // complex
     private double maxLoad; // mandatory
     private double currentLoad; // mandatory
@@ -24,7 +22,7 @@ public class Vehicle implements Serializable {
     private static Set<Vehicle> extent = new HashSet<>(); // class extent
 
     public Vehicle(String manufacturer, Double pricePerDay, FuelConsumption fuelConsumption,
-                   double maxLoad, double currentLoad, Set<String> drivers, Set<Delivery> deliveries) {
+                   double maxLoad, double currentLoad, Set<String> drivers) {
         setOwner();
         setManufacturer(manufacturer);
         setPricePerDay(pricePerDay);
@@ -32,35 +30,38 @@ public class Vehicle implements Serializable {
         setCurrentLoad(currentLoad);
         setFuelConsumption(fuelConsumption);
         addDriver(drivers);
-        updateGarageWithNewVehicle();
-        addDelivery(deliveries);
         // extent.add(this);
     }
 
     public Vehicle(String manufacturer, FuelConsumption fuelConsumption,
-                   double maxLoad, double currentLoad, Set<String> drivers, Set<Delivery> deliveries) {
-        this(manufacturer,null, fuelConsumption, maxLoad, currentLoad, drivers, deliveries);
+                   double maxLoad, double currentLoad, Set<String> drivers) {
+        this(manufacturer,null, fuelConsumption, maxLoad, currentLoad, drivers);
     }
 
     public Set<Delivery> getDeliveries() {
-        return deliveries;
+        return Collections.unmodifiableSet(deliveries);
     }
 
-    public void addDelivery(Set<Delivery> deliveries) {
-        // Vehicle can have no deliveries
-        if (deliveries == null || deliveries.isEmpty()) {
+    public void addDelivery(Delivery delivery) {
+        if (delivery == null) {
+            throw new IllegalArgumentException("delivery cannot be a null value");
+        }
+        if (deliveries.contains(delivery)) {
             return;
         }
-        for (Delivery delivery : deliveries) {
-            if (this.deliveries.contains(delivery)) {
-                continue;
-            }
-            this.deliveries.add(delivery);
-        }
+        this.deliveries.add(delivery);
+        delivery.addVehicle(this);
     }
 
-    public void removeDeliveries() {
-        deliveries.clear();
+    public void removeDelivery(Delivery delivery) {
+        if (delivery == null) {
+            throw new IllegalArgumentException("Cannot remove non-existing delivery");
+        }
+        if (!deliveries.contains(delivery)) {
+            throw new IllegalArgumentException("Delivery does not exist");
+        }
+        deliveries.remove(delivery);
+        delivery.removeVehicle(this);
     }
 
     public static String getOwner() {
@@ -104,13 +105,6 @@ public class Vehicle implements Serializable {
             throw new IllegalArgumentException("Price per day could not be less than 0");
         }
         this.pricePerDay = pricePerDay;
-    }
-    private void updateGarageWithNewVehicle() {
-        Vehicle.VEHICLES_IN_GARAGE++;
-    }
-
-    public static int getNumberOfVehiclesInGarage() {
-        return Vehicle.VEHICLES_IN_GARAGE;
     }
 
     public double getMaxLoad() {
