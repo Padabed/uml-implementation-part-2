@@ -11,20 +11,29 @@ public class Item {
         setDescription(description);
     }
 
-    public void remove() {
-        product.removeItem(this);
-    }
-
     public Product getProduct() {
         return product;
     }
 
     public void setProduct(Product product) {
-        if (this.product != null) {
-            this.product.removeItem(this);
+        if (this.product == product) {
+            return;
         }
-        this.product = product;
-        if (product != null) {
+        if (this.product == null) {
+            this.product = product;
+            product.addItem(this);
+        }
+        if (this.product != null && product == null) {
+            Product p = this.product;
+            this.product = null;
+            p.removeItem(this);
+        }
+        if (this.product != null && product != null) {
+            Product p = this.product;
+            this.product = null;
+            p.removeItem(this);
+
+            this.product = product;
             product.addItem(this);
         }
     }

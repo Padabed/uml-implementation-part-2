@@ -30,7 +30,14 @@ public class Order {
     }
 
     public void remove() {
-
+        if (this.customer != null && this.customer.getOrders().contains(this)) {
+            customer.removeOrder(this);
+        }
+        if (this.product != null && this.product.getOrders().contains(this)) {
+            this.product.removeOrder(this);
+        }
+        this.customer = null;
+        this.product = null;
     }
 
     public Customer getCustomer() {
@@ -41,7 +48,14 @@ public class Order {
         if (customer == null) {
             throw new IllegalArgumentException("Customer is required to create an order");
         }
+        if (this.customer == null) {
+            this.customer = customer;
+            this.customer.addOrder(this);
+            return;
+        }
+        this.customer.removeOrder(this);
         this.customer = customer;
+        this.customer.addOrder(this);
     }
     
     public Product getProduct() {
@@ -52,7 +66,14 @@ public class Order {
         if (product == null) {
             throw new IllegalArgumentException("Product is required to create an order");
         }
+        if (this.product == null) {
+            this.product = product;
+            this.product.addOrder(this);
+            return;
+        }
+        this.product.removeOrder(this);
         this.product = product;
+        this.product.addOrder(this);
     }
 
     public String getDestination() {
@@ -83,7 +104,7 @@ public class Order {
     }
 
     public void setArrivalTime(LocalDateTime arrivalTime) {
-        if (arrivalTime.isAfter(LocalDateTime.now())) {
+        if (arrivalTime != null && arrivalTime.isAfter(LocalDateTime.now())) {
             throw new IllegalArgumentException("Arrival time cannot be predicted");
         }
         if (departureTime != null && arrivalTime.isBefore(departureTime)) {

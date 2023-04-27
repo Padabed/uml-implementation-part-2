@@ -1,5 +1,6 @@
 package associations.attribute;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,17 +19,28 @@ public class Customer {
     }
 
     public Set<Order> getOrders() {
-        return orders;
+        return Collections.unmodifiableSet(orders);
     }
 
-    public void addOrder(Order order) {
-        if (order == null) {
+    public void addOrder(Order o) {
+        if (o == null) {
             throw new IllegalArgumentException("Order cannot be null");
         }
-        if (order.getCustomer() != this) {
-            throw new IllegalArgumentException("Order is not related to this employee");
+        if (o.getCustomer() != null && o.getCustomer() != this) {
+            throw new IllegalArgumentException("Order is not related to this customer");
         }
-        this.orders.add(order);
+        this.orders.add(o);
+    }
+
+    public void removeOrder(Order o) {
+        if (o == null) {
+            throw new IllegalArgumentException("Order cannot be a null value");
+        }
+        if (o.getCustomer() != this) {
+            throw new IllegalArgumentException("Order is not related to this customer");
+        }
+        this.orders.remove(o);
+        o.remove();
     }
 
     public String getFirstName() {
