@@ -33,10 +33,16 @@ public class BasicAssociationTest {
             delivery = new Delivery("Arabika", DeliveryStatus.InPreparation);
             vehicle = new Vehicle("Volvo", null,  fuelConsumption, 2, 1, drivers);
 
-            delivery.addVehicle(vehicle);
+            delivery.setVehicle(vehicle);
             vehicle.removeDelivery(delivery);
 
-            if (vehicle.getDeliveries().contains(delivery) || delivery.getVehicles().contains(vehicle)) {
+            if (delivery.getVehicle() != null && delivery.getVehicle().equals(vehicle)) {
+                fail();
+            }
+
+            delivery.setVehicle(vehicle);
+
+            if (delivery.getVehicle() != null && !delivery.getVehicle().equals(vehicle)) {
                 fail();
             }
 

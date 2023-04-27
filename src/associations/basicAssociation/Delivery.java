@@ -10,7 +10,7 @@ import java.util.Set;
 
 public class Delivery {
 
-    private Set<Vehicle> vehicles = new HashSet<>();
+    private Vehicle vehicle;
 
     private String destination; // mandatory
     private LocalDateTime departureTime; // optional
@@ -29,30 +29,28 @@ public class Delivery {
         this(destination, null,null, status);
     }
 
-    public Set<Vehicle> getVehicles() {
-        return Collections.unmodifiableSet(vehicles);
+    public Vehicle getVehicle() {
+        return vehicle;
     }
 
-    public void addVehicle(Vehicle vehicle) {
+    public void setVehicle(Vehicle vehicle) {
         if (vehicle == null) {
             throw new IllegalArgumentException("Vehicle cannot be a null value");
         }
-        if (vehicles.contains(vehicle)) {
+        if (this.vehicle != null) {
             return;
         }
-        vehicles.add(vehicle);
-        vehicle.addDelivery(this);
+        this.vehicle = vehicle;
+        this.vehicle.addDelivery(this);
     }
 
     public void removeVehicle(Vehicle vehicle) {
         if (vehicle == null) {
-            throw new IllegalArgumentException("Vehicle cannot be a null value");
+            return;
         }
-        if (!vehicles.contains(vehicle)) {
-            throw new IllegalArgumentException("Vehicle does not exist");
-        }
-        this.vehicles.remove(vehicle);
-        vehicle.removeDelivery(this);
+        Vehicle v = this.vehicle;
+        this.vehicle = null;
+        v.removeDelivery(this);
     }
 
     public String getDestination() {

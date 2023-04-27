@@ -46,11 +46,11 @@ public class Vehicle implements Serializable {
         if (delivery == null) {
             throw new IllegalArgumentException("delivery cannot be a null value");
         }
-        if (deliveries.contains(delivery)) {
+        if (this.deliveries.contains(delivery)) {
             return;
         }
         this.deliveries.add(delivery);
-        delivery.addVehicle(this);
+        delivery.setVehicle(this);
     }
 
     public void removeDelivery(Delivery delivery) {
@@ -58,9 +58,9 @@ public class Vehicle implements Serializable {
             throw new IllegalArgumentException("Cannot remove non-existing delivery");
         }
         if (!deliveries.contains(delivery)) {
-            throw new IllegalArgumentException("Delivery does not exist");
+            return;
         }
-        deliveries.remove(delivery);
+        this.deliveries.remove(delivery);
         delivery.removeVehicle(this);
     }
 

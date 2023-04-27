@@ -15,19 +15,23 @@ public class Order {
 
     public Order(String destination, LocalDateTime departureTime,
                  LocalDateTime arrivalTime, DeliveryStatus status, Delivery delivery) {
+        //setDelivery(delivery);
+
         setDestination(destination);
         setArrivalTime(arrivalTime);
         setDepartureTime(departureTime);
         setStatus(status);
-        setDelivery(delivery);
     }
 
     public Order(String destination, DeliveryStatus status, Delivery delivery) {
         this(destination, null,null, status, delivery);
     }
 
-    public void removeOrder() {
-        this.getDelivery().removeOrder(this);
+    public void remove() {
+        if (this.delivery == null) {
+            return;
+        }
+        this.delivery.removeOrder(this);
         setDelivery(null);
     }
 
@@ -67,7 +71,7 @@ public class Order {
     }
 
     public void setArrivalTime(LocalDateTime arrivalTime) {
-        if (arrivalTime.isAfter(LocalDateTime.now())) {
+        if (arrivalTime != null && arrivalTime.isAfter(LocalDateTime.now())) {
             throw new IllegalArgumentException("Arrival time cannot be predicted");
         }
         if (departureTime != null && arrivalTime.isBefore(departureTime)) {

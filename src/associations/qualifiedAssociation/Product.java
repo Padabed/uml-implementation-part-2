@@ -24,13 +24,19 @@ public class Product {
         }
         // recheck this
         if (items.containsKey(item.getName())) {
-            throw new IllegalArgumentException("Item with provided unique key already exists");
+            return;
         }
-        items.put(item.getName(), item);
+        this.items.put(item.getName(), item);
         item.setProduct(this);
     }
 
     public void removeItem(Item item) {
+        if (item == null) {
+            throw new IllegalArgumentException("Item cannot be a null value");
+        }
+        if (!this.items.containsKey(item.getName())) {
+            return;
+        }
         items.remove(item.getName());
         item.setProduct(null);
     }
